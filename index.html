@@ -184,24 +184,25 @@ async function iniciarSync() {
 async function carregarTodos() {
   const colecoes = ["tarefas","compras","manutencoes","prestadores"];
   for (const col of colecoes) {
-    const { data } = await sb.from(col).select("*");
-    dados[col] = data || [];
+    const { data, error } = await sb.from(col).select("*");
+    if (!error && data) {
+      dados[col] = data.map(row => row.dados || row);
+    } else {
+      dados[col] = [];
+    }
   }
 }
 
 async function salvarItem(colecao, item) {
-  const existe = dados[colecao].find(x => x.id === item.id);
-  if (existe) {
-    await sb.from(colecao).update(item).eq("id", item.id);
-  } else {
-    await sb.from(colecao).insert(item);
-  }
+  const { error } = await sb.from(colecao).upsert({ id: item.id, dados: item }, { onConflict: "id" });
+  if (error) console.error("Erro ao salvar:", error);
   await carregarTodos();
   renderAba();
 }
 
 async function removerItem(colecao, id) {
-  await sb.from(colecao).delete().eq("id", id);
+  const { error } = await sb.from(colecao).delete().eq("id", id);
+  if (error) console.error("Erro ao remover:", error);
   await carregarTodos();
   renderAba();
 }
