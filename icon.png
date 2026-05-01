@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- Fundo arredondado caramelo escuro -->
+  <rect width="512" height="512" rx="112" fill="#7B4A1E"/>
+  
+  <!-- Sombra suave da casa -->
+  <ellipse cx="256" cy="422" rx="140" ry="16" fill="#000000" opacity="0.15"/>
+  
+  <!-- Corpo da casa -->
+  <rect x="116" y="248" width="280" height="182" rx="12" fill="#F5DEB3"/>
+  
+  <!-- Telhado -->
+  <polygon points="256,90 90,262 422,262" fill="#C47A2B"/>
+  
+  <!-- Telhado camada superior brilho -->
+  <polygon points="256,90 90,262 173,262 256,140" fill="#E8962E" opacity="0.4"/>
+  
+  <!-- Chaminé -->
+  <rect x="312" y="115" width="36" height="82" rx="6" fill="#C47A2B"/>
+  <rect x="306" y="105" width="48" height="18" rx="5" fill="#7B4A1E"/>
+
+  <!-- Porta -->
+  <rect x="208" y="316" width="96" height="114" rx="10" fill="#C47A2B"/>
+  <rect x="218" y="326" width="76" height="94" rx="8" fill="#7B4A1E" opacity="0.3"/>
+  <!-- Maçaneta -->
+  <circle cx="292" cy="378" r="7" fill="#F5DEB3"/>
+
+  <!-- Janela esquerda -->
+  <rect x="134" y="276" width="78" height="70" rx="8" fill="#5B9BD5"/>
+  <rect x="134" y="276" width="78" height="70" rx="8" fill="white" opacity="0.25"/>
+  <rect x="134" y="309" width="78" height="4" fill="#2F6BA8" opacity="0.5"/>
+  <rect x="171" y="276" width="4" height="70" fill="#2F6BA8" opacity="0.5"/>
+
+  <!-- Janela direita -->
+  <rect x="300" y="276" width="78" height="70" rx="8" fill="#5B9BD5"/>
+  <rect x="300" y="276" width="78" height="70" rx="8" fill="white" opacity="0.25"/>
+  <rect x="300" y="309" width="78" height="4" fill="#2F6BA8" opacity="0.5"/>
+  <rect x="337" y="276" width="4" height="70" fill="#2F6BA8" opacity="0.5"/>
+
+  <!-- Degrau da porta -->
+  <rect x="194" y="425" width="124" height="14" rx="5" fill="#C47A2B"/>
+
+  <!-- Decoração: flores na frente -->
+  <circle cx="152" cy="430" r="10" fill="#E85D5D"/>
+  <circle cx="170" cy="418" r="8" fill="#F0A500"/>
+  <circle cx="342" cy="430" r="10" fill="#E85D5D"/>
+  <circle cx="360" cy="418" r="8" fill="#F0A500"/>
+
+  <!-- Estrelinhas decorativas -->
+  <circle cx="148" cy="150" r="5" fill="#F5DEB3" opacity="0.6"/>
+  <circle cx="370" cy="165" r="4" fill="#F5DEB3" opacity="0.5"/>
+  <circle cx="118" cy="198" r="3" fill="#F5DEB3" opacity="0.4"/>
+  <circle cx="402" cy="128" r="3" fill="#F5DEB3" opacity="0.4"/>
+</svg>
