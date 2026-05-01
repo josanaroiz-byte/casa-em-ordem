@@ -132,7 +132,8 @@
 // 🔧 CONFIGURAÇÃO DO SUPABASE
 // Substitua pelos seus dados do Supabase
 // ════════════════════════════════════════════
-https://fyrzywtzaemqdrviizey.supabase.co
+const SUPABASE_URL    = "https://fyrzywtzaemqdrviizey.supabase.co";
+const SUPABASE_ANON   = "sb_publishable_L5KPwUUdmFBmHu-cFNsSGQ_s0zqIEoO";
 const { createClient } = supabase;
 const sb = createClient(SUPABASE_URL, SUPABASE_ANON);
 
@@ -476,8 +477,8 @@ function removerManutencao(id) { removerItem("manutencoes",id); fecharModal(); }
 // GOOGLE CALENDAR (via Google Calendar API)
 // Instrução: substitua CLIENT_ID e API_KEY abaixo
 // ════════════════════════════════════════════
-const GCAL_API_KEY    = "COLE_AQUI_SUA_GCAL_API_KEY";
-const GCAL_CLIENT_ID  = "COLE_AQUI_SEU_CLIENT_ID.apps.googleusercontent.com";
+const GCAL_API_KEY    = "AIzaSyDveFc6TOnyikVtHV_ncbqdcd7lqXV8mik";
+const GCAL_CLIENT_ID  = "510073834567-ossj5sqfbetoj7glofqpmm4raqvduic2.apps.googleusercontent.com";
 let gisInited = false, gapiInited = false, tokenClient;
 
 function loadGoogleLibs() {
