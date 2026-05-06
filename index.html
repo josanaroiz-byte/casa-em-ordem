@@ -97,6 +97,8 @@
   <h1>Casa em Ordem</h1>
   <p>Colocando tudo em ordem!</p>
   <input id="input-nome" type="text" placeholder="Seu nome (ex: Josana)" maxlength="30"/>
+  <input id="input-codigo" type="text" placeholder="Código do grupo (ex: familia-roiz)" maxlength="40"/>
+  <p style="font-size:11px;color:var(--text3);max-width:320px;margin:-4px 0 12px;text-align:left">Use o mesmo código com quem quiser compartilhar as listas. Códigos diferentes = listas separadas.</p>
   <button class="btn-primary" onclick="entrar()" style="width:100%;max-width:320px">Entrar</button>
 </div>
 
@@ -132,6 +134,7 @@ const { createClient } = supabase;
 const sb = createClient(SUPABASE_URL, SUPABASE_ANON);
 
 let nomeUsuario = "";
+let codigoGrupo = "";
 let abaAtual = "dashboard";
 let dados = { tarefas:[], compras:[], manutencoes:[], prestadores:[], pagamentos:[] };
 let pollingInterval = null;
@@ -149,14 +152,30 @@ const prioColor = { Alta:"red",Normal:"blue",Baixa:"gray" };
 
 function entrar() {
   const v = document.getElementById("input-nome").value.trim();
+  const c = document.getElementById("input-codigo").value.trim().toLowerCase().replace(/\s+/g,"-");
   if (!v) { showToast("Digite seu nome para entrar.", false); return; }
+  if (!c) { showToast("Digite um código de grupo.", false); return; }
   nomeUsuario = v;
+  codigoGrupo = c;
+  localStorage.setItem("ceo_nome", v);
+  localStorage.setItem("ceo_codigo", c);
   document.getElementById("screen-login").style.display = "none";
   document.getElementById("screen-app").style.display = "block";
   document.getElementById("header-sub").textContent = "Olá, " + nomeUsuario + " 👋";
   iniciarSync();
 }
-document.getElementById("input-nome").addEventListener("keydown", e => { if(e.key==="Enter") entrar(); });
+document.getElementById("input-nome").addEventListener("keydown", e => { if(e.key==="Enter") document.getElementById("input-codigo").focus(); });
+document.getElementById("input-codigo").addEventListener("keydown", e => { if(e.key==="Enter") entrar(); });
+
+// Recuperar sessão salva
+window.addEventListener("load", () => {
+  const nome = localStorage.getItem("ceo_nome");
+  const codigo = localStorage.getItem("ceo_codigo");
+  if (nome && codigo) {
+    document.getElementById("input-nome").value = nome;
+    document.getElementById("input-codigo").value = codigo;
+  }
+});
 
 async function iniciarSync() {
   await carregarTodos();
@@ -167,21 +186,21 @@ async function iniciarSync() {
 async function carregarTodos() {
   const colecoes = ["tarefas","compras","manutencoes","prestadores","pagamentos"];
   for (const col of colecoes) {
-    const { data, error } = await sb.from(col).select("*");
+    const { data, error } = await sb.from(col).select("*").eq("grupo", codigoGrupo);
     if (!error && data) dados[col] = data.map(row => row.dados || row);
     else dados[col] = [];
   }
 }
 
 async function salvarItem(colecao, item) {
-  const { error } = await sb.from(colecao).upsert({ id:item.id, dados:item }, { onConflict:"id" });
+  const { error } = await sb.from(colecao).upsert({ id:item.id, grupo:codigoGrupo, dados:item }, { onConflict:"id" });
   if (error) console.error("Erro ao salvar:", error);
   await carregarTodos();
   renderAba();
 }
 
 async function removerItem(colecao, id) {
-  const { error } = await sb.from(colecao).delete().eq("id", id);
+  const { error } = await sb.from(colecao).delete().eq("id", id).eq("grupo", codigoGrupo);
   if (error) console.error("Erro ao remover:", error);
   await carregarTodos();
   renderAba();
