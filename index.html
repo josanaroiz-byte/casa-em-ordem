@@ -4,16 +4,21 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Casa em Ordem</title>
+<link rel="icon" type="image/png" href="icone.png"/>
+<link rel="apple-touch-icon" href="icone.png"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-title" content="Casa em Ordem"/>
+<meta name="theme-color" content="#7B4A1E"/>
 
 <!-- Supabase -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
   :root {
-    --bg: #ffffff; --bg2: #f5f5f3; --bg3: #eeede8;
-    --text: #1a1a1a; --text2: #666660; --text3: #999992;
-    --border: rgba(0,0,0,0.12); --border2: rgba(0,0,0,0.2);
-    --radius: 10px; --radius-lg: 14px;
+    --bg:#d4ddd6; --bg2:#c4d0c7; --bg3:#b4c2b7;
+    --text:#1a1a1a; --text2:#666660; --text3:#999992;
+    --border:rgba(0,0,0,0.12); --border2:rgba(0,0,0,0.2);
+    --radius:10px; --radius-lg:14px;
     --green-bg:#EAF3DE; --green-text:#3B6D11;
     --blue-bg:#E6F1FB; --blue-text:#185FA5;
     --amber-bg:#FAEEDA; --amber-text:#854F0B;
@@ -32,7 +37,7 @@
   *{box-sizing:border-box;margin:0;padding:0}
   body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);max-width:440px;margin:0 auto;padding-bottom:80px;min-height:100vh}
   h1{font-size:20px;font-weight:500}
-  input,select,textarea{font-family:inherit;font-size:14px;padding:9px 11px;border:0.5px solid var(--border2);border-radius:var(--radius);background:var(--bg);color:var(--text);width:100%;outline:none;transition:border 0.15s}
+  input,select,textarea{font-family:inherit;font-size:14px;padding:9px 11px;border:0.5px solid var(--border2);border-radius:var(--radius);background:#f8f6f0;color:var(--text);width:100%;outline:none;transition:border 0.15s}
   input:focus,select:focus,textarea:focus{border-color:#185FA5}
   textarea{resize:vertical;min-height:60px;line-height:1.5}
   button{font-family:inherit;font-size:13px;padding:9px 14px;border:0.5px solid var(--border2);border-radius:var(--radius);background:var(--bg);color:var(--text);cursor:pointer;transition:background 0.15s}
@@ -62,7 +67,6 @@
   .done .item-name{text-decoration:line-through;color:var(--text2)}
   .section-label{font-size:12px;color:var(--text2);margin:16px 0 8px}
   .empty{text-align:center;padding:30px 0;color:var(--text2);font-size:14px}
-  /* Modal */
   .overlay{position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:100;display:flex;align-items:flex-end}
   .modal{background:var(--bg);border-radius:16px 16px 0 0;width:100%;max-height:88vh;overflow-y:auto;padding:20px 16px 36px}
   .modal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
@@ -71,30 +75,23 @@
   .field-label{font-size:12px;color:var(--text2);margin:6px 0 5px;font-weight:500}
   .gap{margin-bottom:10px}
   .divider{font-size:12px;color:var(--text2);margin:14px 0 8px;font-weight:500;padding-top:8px;border-top:0.5px solid var(--border)}
-  /* Toast */
   .toast{position:fixed;top:16px;left:50%;transform:translateX(-50%);padding:10px 20px;border-radius:20px;font-size:13px;font-weight:500;z-index:300;max-width:320px;text-align:center;transition:opacity 0.3s}
-  /* Avatar */
   .avatar{width:40px;height:40px;border-radius:50%;background:var(--teal-bg);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:500;color:var(--teal-text);flex-shrink:0}
-  /* Prestador detail */
   .detail-row{margin-bottom:10px}
   .detail-row .dl{font-size:11px;color:var(--text2);margin-bottom:2px}
   .detail-row .dv{font-size:14px;color:var(--text)}
   .finance-box{background:var(--green-bg);border-radius:var(--radius);padding:12px;margin-top:12px}
   .finance-box .ft{font-size:12px;font-weight:500;color:var(--green-text);margin-bottom:8px}
   .finance-box p{font-size:13px;color:#27500A;margin-bottom:3px}
-  /* Screen */
   #screen-login{display:flex;flex-direction:column;justify-content:center;align-items:center;min-height:100vh;padding:32px 24px;text-align:center}
   #screen-login h1{font-size:28px;margin-bottom:8px}
   #screen-login p{color:var(--text2);margin-bottom:32px;font-size:15px}
   #screen-login input{max-width:320px;margin-bottom:12px;font-size:15px}
   #screen-login button{max-width:320px;width:100%;font-size:15px;padding:12px}
-  .spinner{display:inline-block;width:18px;height:18px;border:2px solid var(--border2);border-top-color:var(--text);border-radius:50%;animation:spin 0.7s linear infinite;margin-right:6px;vertical-align:middle}
-  @keyframes spin{to{transform:rotate(360deg)}}
 </style>
 </head>
 <body>
 
-<!-- ═══ TELA DE BOAS-VINDAS ═══ -->
 <div id="screen-login">
   <div style="font-size:48px;margin-bottom:12px">🏠</div>
   <h1>Casa em Ordem</h1>
@@ -103,7 +100,6 @@
   <button class="btn-primary" onclick="entrar()" style="width:100%;max-width:320px">Entrar</button>
 </div>
 
-<!-- ═══ APP PRINCIPAL ═══ -->
 <div id="screen-app" style="display:none">
   <div class="header">
     <h1>🏠 Casa em Ordem</h1>
@@ -115,48 +111,42 @@
     <button onclick="setAba('compras')">Compras</button>
     <button onclick="setAba('manutencoes')">Manutenção</button>
     <button onclick="setAba('prestadores')">Prestadores</button>
+    <button onclick="setAba('pagamentos')">Pagamentos</button>
   </div>
   <div class="content" id="content"></div>
 </div>
 
-<!-- ═══ MODAL ═══ -->
 <div class="overlay" id="overlay" style="display:none" onclick="closeModal(event)">
   <div class="modal" id="modal-box"></div>
 </div>
 
-<!-- ═══ TOAST ═══ -->
 <div class="toast" id="toast" style="display:none"></div>
 
 <script>
-// ════════════════════════════════════════════
-// 🔧 CONFIGURAÇÃO DO SUPABASE
-// Substitua pelos seus dados do Supabase
-// ════════════════════════════════════════════
-const SUPABASE_URL    = "https://fyrzywtzaemqdrviizey.supabase.co";
-const SUPABASE_ANON   = "sb_publishable_L5KPwUUdmFBmHu-cFNsSGQ_s0zqIEoO";
+const SUPABASE_URL  = "https://fyrzywtzaemqdrviizey.supabase.co";
+const SUPABASE_ANON = "sb_publishable_L5KPwUUdmFBmHu-cFNsSGQ_s0zqIEoO";
+const GCAL_API_KEY  = "AIzaSyDveFc6TOnyikVtHV_ncbqdcd7lqXV8mik";
+const GCAL_CLIENT_ID= "510073834567-ossj5sqfbetoj7glofqpmm4raqvduic2.apps.googleusercontent.com";
+
 const { createClient } = supabase;
 const sb = createClient(SUPABASE_URL, SUPABASE_ANON);
 
-// ════════════════════════════════════════════
-// ESTADO GLOBAL
-// ════════════════════════════════════════════
 let nomeUsuario = "";
 let abaAtual = "dashboard";
-let dados = { tarefas:[], compras:[], manutencoes:[], prestadores:[] };
+let dados = { tarefas:[], compras:[], manutencoes:[], prestadores:[], pagamentos:[] };
 let pollingInterval = null;
 
-const frequencias = ["Diária","Semanal","Quinzenal","Mensal","Anual"];
-const categorias  = ["Mercado","Limpeza","Farmácia","Higiene","Outros"];
-const ambientes   = ["Cozinha","Banheiro","Sala","Quarto","Área externa","Geral"];
-const tiposPix    = ["CPF","CNPJ","Telefone","E-mail","Chave aleatória"];
+const frequencias    = ["Diária","Semanal","Quinzenal","Mensal","Anual"];
+const categorias     = ["Mercado","Limpeza","Farmácia","Higiene","Outros"];
+const ambientes      = ["Cozinha","Banheiro","Sala","Quarto","Área externa","Geral"];
+const tiposPix       = ["CPF","CNPJ","Telefone","E-mail","Chave aleatória"];
 const especialidades = ["Encanador","Eletricista","Pintor","Diarista","Jardineiro","Marceneiro","Pedreiro","Outros"];
-const espColor = { Encanador:"blue",Eletricista:"amber",Pintor:"coral",Diarista:"teal",Jardineiro:"green",Marceneiro:"amber",Pedreiro:"gray",Outros:"gray" };
-const freqColor  = { Diária:"teal",Semanal:"blue",Quinzenal:"amber",Mensal:"gray",Anual:"red" };
-const prioColor  = { Alta:"red",Normal:"blue",Baixa:"gray" };
+const tiposPagamento = ["Conta fixa","Parcela","Avulso"];
+const formasPagamento= ["PIX","Cartão de crédito","Cartão de débito","Boleto","Débito automático","Dinheiro"];
+const espColor  = { Encanador:"blue",Eletricista:"amber",Pintor:"coral",Diarista:"teal",Jardineiro:"green",Marceneiro:"amber",Pedreiro:"gray",Outros:"gray" };
+const freqColor = { Diária:"teal",Semanal:"blue",Quinzenal:"amber",Mensal:"gray",Anual:"red" };
+const prioColor = { Alta:"red",Normal:"blue",Baixa:"gray" };
 
-// ════════════════════════════════════════════
-// ENTRADA
-// ════════════════════════════════════════════
 function entrar() {
   const v = document.getElementById("input-nome").value.trim();
   if (!v) { showToast("Digite seu nome para entrar.", false); return; }
@@ -168,51 +158,39 @@ function entrar() {
 }
 document.getElementById("input-nome").addEventListener("keydown", e => { if(e.key==="Enter") entrar(); });
 
-// ════════════════════════════════════════════
-// SUPABASE SYNC
-// ════════════════════════════════════════════
 async function iniciarSync() {
   await carregarTodos();
   renderAba();
-  // Atualiza a cada 10 segundos para manter sincronizado
-  pollingInterval = setInterval(async () => {
-    await carregarTodos();
-    renderAba();
-  }, 10000);
+  pollingInterval = setInterval(async () => { await carregarTodos(); renderAba(); }, 10000);
 }
 
 async function carregarTodos() {
-  const colecoes = ["tarefas","compras","manutencoes","prestadores"];
+  const colecoes = ["tarefas","compras","manutencoes","prestadores","pagamentos"];
   for (const col of colecoes) {
-    const { data } = await sb.from(col).select("*");
-    dados[col] = data || [];
+    const { data, error } = await sb.from(col).select("*");
+    if (!error && data) dados[col] = data.map(row => row.dados || row);
+    else dados[col] = [];
   }
 }
 
 async function salvarItem(colecao, item) {
-  const existe = dados[colecao].find(x => x.id === item.id);
-  if (existe) {
-    await sb.from(colecao).update(item).eq("id", item.id);
-  } else {
-    await sb.from(colecao).insert(item);
-  }
+  const { error } = await sb.from(colecao).upsert({ id:item.id, dados:item }, { onConflict:"id" });
+  if (error) console.error("Erro ao salvar:", error);
   await carregarTodos();
   renderAba();
 }
 
 async function removerItem(colecao, id) {
-  await sb.from(colecao).delete().eq("id", id);
+  const { error } = await sb.from(colecao).delete().eq("id", id);
+  if (error) console.error("Erro ao remover:", error);
   await carregarTodos();
   renderAba();
 }
 
-// ════════════════════════════════════════════
-// NAVEGAÇÃO
-// ════════════════════════════════════════════
 function setAba(aba) {
   abaAtual = aba;
   document.querySelectorAll(".nav button").forEach((b,i) => {
-    b.classList.toggle("active", ["dashboard","tarefas","compras","manutencoes","prestadores"][i] === aba);
+    b.classList.toggle("active", ["dashboard","tarefas","compras","manutencoes","prestadores","pagamentos"][i] === aba);
   });
   renderAba();
 }
@@ -224,11 +202,9 @@ function renderAba() {
   else if (abaAtual==="compras")     el.innerHTML = renderCompras();
   else if (abaAtual==="manutencoes") el.innerHTML = renderManutencoes();
   else if (abaAtual==="prestadores") el.innerHTML = renderPrestadores();
+  else if (abaAtual==="pagamentos")  el.innerHTML = renderPagamentos();
 }
 
-// ════════════════════════════════════════════
-// HELPERS
-// ════════════════════════════════════════════
 function badge(label, color) {
   const c = { green:"var(--green-bg);color:var(--green-text)", blue:"var(--blue-bg);color:var(--blue-text)", amber:"var(--amber-bg);color:var(--amber-text)", red:"var(--red-bg);color:var(--red-text)", teal:"var(--teal-bg);color:var(--teal-text)", gray:"var(--gray-bg);color:var(--gray-text)", purple:"var(--purple-bg);color:var(--purple-text)", coral:"#FAECE7;color:#993C1D" }[color||"gray"] || "var(--gray-bg);color:var(--gray-text)";
   return `<span class="badge" style="background:${c}">${esc(label)}</span>`;
@@ -245,24 +221,22 @@ function showToast(msg, ok=true) {
 }
 function closeModal(e) { if(e.target===document.getElementById("overlay")) fecharModal(); }
 function fecharModal() { document.getElementById("overlay").style.display="none"; }
-function abrirModal(html) {
-  document.getElementById("modal-box").innerHTML = html;
-  document.getElementById("overlay").style.display="flex";
-}
+function abrirModal(html) { document.getElementById("modal-box").innerHTML = html; document.getElementById("overlay").style.display="flex"; }
 function sel(opts, val, name) {
   return `<select name="${name}" onchange="window._form['${name}']=this.value">${opts.map(o=>`<option${o===val?" selected":""}>${esc(o)}</option>`).join("")}</select>`;
 }
 
-// ════════════════════════════════════════════
-// DASHBOARD
-// ════════════════════════════════════════════
+// ── DASHBOARD ──
 function renderDashboard() {
-  const pT = dados.tarefas.filter(t=>!t.feita).length;
-  const pC = dados.compras.filter(c=>!c.comprado).length;
-  const pM = dados.manutencoes.filter(m=>!m.feita).length;
-  const pP = dados.prestadores.length;
-  const hoje = dados.tarefas.filter(t=>!t.feita && t.frequencia==="Diária").slice(0,3);
-  const urg  = dados.compras.filter(c=>!c.comprado && c.prioridade==="Alta").slice(0,3);
+  const pT   = dados.tarefas.filter(t=>!t.feita).length;
+  const pC   = dados.compras.filter(c=>!c.comprado).length;
+  const pM   = dados.manutencoes.filter(m=>!m.feita).length;
+  const pP   = dados.prestadores.length;
+  const pPag = (dados.pagamentos||[]).filter(p=>!p.pago).length;
+  const totalPag = (dados.pagamentos||[]).filter(p=>!p.pago).reduce((a,p)=>a+(parseFloat(p.valor)||0),0);
+  const hoje    = dados.tarefas.filter(t=>!t.feita && t.frequencia==="Diária").slice(0,3);
+  const urg     = dados.compras.filter(c=>!c.comprado && c.prioridade==="Alta").slice(0,3);
+  const vencidas= (dados.pagamentos||[]).filter(p=>!p.pago && p.vencimento && new Date(p.vencimento)<new Date()).slice(0,3);
 
   let html = `<p style="font-size:14px;font-weight:500;color:var(--text2);margin-bottom:12px">Resumo</p>
   <div class="grid2" style="margin-bottom:20px">
@@ -270,8 +244,8 @@ function renderDashboard() {
     <div class="metric" onclick="setAba('compras')"><div class="label">Itens para comprar</div><div class="val" style="color:${pC>0?"#BA7517":"#1D9E75"}">${pC}</div></div>
     <div class="metric" onclick="setAba('manutencoes')"><div class="label">Manutenções</div><div class="val" style="color:${pM>0?"#A32D2D":"#1D9E75"}">${pM}</div></div>
     <div class="metric" onclick="setAba('prestadores')"><div class="label">Prestadores</div><div class="val" style="color:#185FA5">${pP}</div></div>
+    <div class="metric" onclick="setAba('pagamentos')" style="grid-column:span 2"><div class="label">Contas a pagar</div><div style="display:flex;justify-content:space-between;align-items:center"><div class="val" style="color:${pPag>0?"#A32D2D":"#1D9E75"}">${pPag} conta${pPag!==1?"s":""}</div><div style="font-size:16px;font-weight:500;color:${pPag>0?"#A32D2D":"#1D9E75"}">R$ ${totalPag.toFixed(2)}</div></div></div>
   </div>`;
-
   if (hoje.length) {
     html += `<p style="font-size:13px;font-weight:500;margin-bottom:8px">Tarefas de hoje</p>`;
     hoje.forEach(t => html += `<div style="font-size:13px;padding:8px 10px;background:var(--bg2);border-radius:var(--radius);margin-bottom:6px">${esc(t.nome)}</div>`);
@@ -280,23 +254,22 @@ function renderDashboard() {
     html += `<p style="font-size:13px;font-weight:500;margin:14px 0 8px">Compras urgentes</p>`;
     urg.forEach(c => html += `<div style="font-size:13px;padding:8px 10px;background:var(--red-bg);border-radius:var(--radius);margin-bottom:6px;color:var(--red-text)">${esc(c.nome)}${c.qtd?" — "+esc(c.qtd):""}</div>`);
   }
-  if (!pT && !pC && !pM) html += `<div class="empty">Tudo em dia! 🎉</div>`;
+  if (vencidas.length) {
+    html += `<p style="font-size:13px;font-weight:500;margin:14px 0 8px">⚠️ Contas vencidas</p>`;
+    vencidas.forEach(p => html += `<div style="font-size:13px;padding:8px 10px;background:var(--red-bg);border-radius:var(--radius);margin-bottom:6px;color:var(--red-text)">${esc(p.nome)} — R$ ${parseFloat(p.valor||0).toFixed(2)}</div>`);
+  }
+  if (!pT && !pC && !pM && !pPag) html += `<div class="empty">Tudo em dia! 🎉</div>`;
   return html;
 }
 
-// ════════════════════════════════════════════
-// TAREFAS
-// ════════════════════════════════════════════
+// ── TAREFAS ──
 function renderTarefas() {
   const pend = dados.tarefas.filter(t=>!t.feita);
-  const done = dados.tarefas.filter(t=>t.feita);
+  const done  = dados.tarefas.filter(t=>t.feita);
   let html = `<div class="row"><p>Tarefas & limpeza</p><button onclick="modalTarefa()">+ Adicionar</button></div>`;
   if (!dados.tarefas.length) html += `<div class="empty">Nenhuma tarefa ainda.</div>`;
   pend.forEach(t => html += itemTarefa(t, false));
-  if (done.length) {
-    html += `<p class="section-label">Concluídas</p>`;
-    done.forEach(t => html += itemTarefa(t, true));
-  }
+  if (done.length) { html += `<p class="section-label">Concluídas</p>`; done.forEach(t => html += itemTarefa(t, true)); }
   return html;
 }
 function itemTarefa(t, feita) {
@@ -309,10 +282,7 @@ function itemTarefa(t, feita) {
     </div>
   </div>`;
 }
-function toggleTarefa(id) {
-  const t = dados.tarefas.find(x=>x.id===id);
-  if (t) salvarItem("tarefas", {...t, feita:!t.feita});
-}
+function toggleTarefa(id) { const t=dados.tarefas.find(x=>x.id===id); if(t) salvarItem("tarefas",{...t,feita:!t.feita}); }
 window._form = {};
 function modalTarefa(id) {
   const t = id ? dados.tarefas.find(x=>x.id===id) : null;
@@ -335,49 +305,30 @@ function modalTarefa(id) {
     ${t?`<button class="btn-danger" style="width:100%" onclick="removerTarefa('${t.id}')">Excluir tarefa</button>`:""}
   `);
 }
-function salvarTarefa() {
-  if (!window._form.nome.trim()) { showToast("Digite o nome da tarefa.",false); return; }
-  salvarItem("tarefas", window._form);
-  fecharModal();
-}
-async function salvarEAgendarTarefa() {
-  if (!window._form.nome.trim()) { showToast("Digite o nome da tarefa.",false); return; }
-  if (!window._form.dataLembrete) { showToast("Defina uma data de lembrete.",false); return; }
-  salvarItem("tarefas", window._form);
-  fecharModal();
-  showToast("Salvando e agendando...");
-  await agendarCalendar("tarefa", window._form);
-}
+function salvarTarefa() { if(!window._form.nome.trim()){showToast("Digite o nome da tarefa.",false);return;} salvarItem("tarefas",window._form); fecharModal(); }
+async function salvarEAgendarTarefa() { if(!window._form.nome.trim()){showToast("Digite o nome.",false);return;} if(!window._form.dataLembrete){showToast("Defina uma data de lembrete.",false);return;} salvarItem("tarefas",window._form); fecharModal(); showToast("Salvando e agendando..."); await agendarCalendar("tarefa",window._form); }
 function removerTarefa(id) { removerItem("tarefas",id); fecharModal(); }
 
-// ════════════════════════════════════════════
-// COMPRAS
-// ════════════════════════════════════════════
+// ── COMPRAS ──
 function renderCompras() {
   const pend = dados.compras.filter(c=>!c.comprado);
-  const done = dados.compras.filter(c=>c.comprado);
+  const done  = dados.compras.filter(c=>c.comprado);
   let html = `<div class="row"><p>Lista de compras</p><button onclick="modalCompra()">+ Adicionar</button></div>`;
   if (!dados.compras.length) html += `<div class="empty">Lista vazia.</div>`;
   pend.forEach(c => html += itemCompra(c, false));
-  if (done.length) {
-    html += `<p class="section-label">Comprados</p>`;
-    done.forEach(c => html += itemCompra(c, true));
-  }
+  if (done.length) { html += `<p class="section-label">Comprados</p>`; done.forEach(c => html += itemCompra(c, true)); }
   return html;
 }
 function itemCompra(c, comprado) {
   return `<div class="item${comprado?" done":""}">
     <input type="checkbox" ${comprado?"checked":""} style="width:16px;height:16px;flex-shrink:0;margin-top:3px;cursor:pointer" onchange="toggleCompra('${c.id}')">
     <div class="item-body" onclick="modalCompra('${c.id}')">
-      <div class="item-name">${esc(c.nome)}${c.qtd?` <span style="font-size:12px;color:var(--text2)">— ${esc(c.qtd)}</span>`:""}  </div>
+      <div class="item-name">${esc(c.nome)}${c.qtd?` <span style="font-size:12px;color:var(--text2)">— ${esc(c.qtd)}</span>`:""}</div>
       <div class="item-badges">${badge(c.categoria,"gray")}${badge(c.prioridade,prioColor[c.prioridade]||"gray")}</div>
     </div>
   </div>`;
 }
-function toggleCompra(id) {
-  const c = dados.compras.find(x=>x.id===id);
-  if (c) salvarItem("compras", {...c, comprado:!c.comprado});
-}
+function toggleCompra(id) { const c=dados.compras.find(x=>x.id===id); if(c) salvarItem("compras",{...c,comprado:!c.comprado}); }
 function modalCompra(id) {
   const c = id ? dados.compras.find(x=>x.id===id) : null;
   window._form = c ? {...c} : { id:uid(),nome:"",qtd:"",categoria:"Mercado",prioridade:"Normal",comprado:false };
@@ -391,19 +342,13 @@ function modalCompra(id) {
     ${c?`<button class="btn-danger" style="width:100%" onclick="removerCompra('${c.id}')">Excluir item</button>`:""}
   `);
 }
-function salvarCompra() {
-  if (!window._form.nome.trim()) { showToast("Digite o nome do item.",false); return; }
-  salvarItem("compras", window._form);
-  fecharModal();
-}
+function salvarCompra() { if(!window._form.nome.trim()){showToast("Digite o nome do item.",false);return;} salvarItem("compras",window._form); fecharModal(); }
 function removerCompra(id) { removerItem("compras",id); fecharModal(); }
 
-// ════════════════════════════════════════════
-// MANUTENÇÕES
-// ════════════════════════════════════════════
+// ── MANUTENÇÕES ──
 function renderManutencoes() {
   const pend = dados.manutencoes.filter(m=>!m.feita);
-  const done = dados.manutencoes.filter(m=>m.feita);
+  const done  = dados.manutencoes.filter(m=>m.feita);
   let html = `<div class="row"><p>Manutenção</p><button onclick="modalManutencao()">+ Adicionar</button></div>`;
   if (!dados.manutencoes.length) html += `<div class="empty">Nenhuma manutenção.</div>`;
   pend.forEach(m => {
@@ -424,17 +369,11 @@ function renderManutencoes() {
   });
   if (done.length) {
     html += `<p class="section-label">Concluídas</p>`;
-    done.forEach(m => html += `<div class="item done">
-      <div class="item-body"><div class="item-name">${esc(m.nome)}</div></div>
-      <button style="font-size:11px;padding:3px 10px" onclick="toggleManutencao('${m.id}')">Reabrir</button>
-    </div>`);
+    done.forEach(m => html += `<div class="item done"><div class="item-body"><div class="item-name">${esc(m.nome)}</div></div><button style="font-size:11px;padding:3px 10px" onclick="toggleManutencao('${m.id}')">Reabrir</button></div>`);
   }
   return html;
 }
-function toggleManutencao(id) {
-  const m = dados.manutencoes.find(x=>x.id===id);
-  if (m) salvarItem("manutencoes", {...m, feita:!m.feita});
-}
+function toggleManutencao(id) { const m=dados.manutencoes.find(x=>x.id===id); if(m) salvarItem("manutencoes",{...m,feita:!m.feita}); }
 function modalManutencao(id) {
   const m = id ? dados.manutencoes.find(x=>x.id===id) : null;
   window._form = m ? {...m} : { id:uid(),nome:"",local:"",descricao:"",data:"",dataLembrete:"",horaLembrete:"09:00",feita:false };
@@ -458,83 +397,75 @@ function modalManutencao(id) {
     ${m?`<button class="btn-danger" style="width:100%" onclick="removerManutencao('${m.id}')">Excluir</button>`:""}
   `);
 }
-function salvarManutencao() {
-  if (!window._form.nome.trim()) { showToast("Digite o nome.",false); return; }
-  salvarItem("manutencoes", window._form);
-  fecharModal();
-}
-async function salvarEAgendarManutencao() {
-  if (!window._form.nome.trim()) { showToast("Digite o nome.",false); return; }
-  if (!window._form.dataLembrete) { showToast("Defina uma data de lembrete.",false); return; }
-  salvarItem("manutencoes", window._form);
-  fecharModal();
-  showToast("Agendando no Calendar...");
-  await agendarCalendar("manutencao", window._form);
-}
+function salvarManutencao() { if(!window._form.nome.trim()){showToast("Digite o nome.",false);return;} salvarItem("manutencoes",window._form); fecharModal(); }
+async function salvarEAgendarManutencao() { if(!window._form.nome.trim()){showToast("Digite o nome.",false);return;} if(!window._form.dataLembrete){showToast("Defina uma data de lembrete.",false);return;} salvarItem("manutencoes",window._form); fecharModal(); showToast("Agendando no Calendar..."); await agendarCalendar("manutencao",window._form); }
 function removerManutencao(id) { removerItem("manutencoes",id); fecharModal(); }
 
-// ════════════════════════════════════════════
-// GOOGLE CALENDAR (via Google Calendar API)
-// Instrução: substitua CLIENT_ID e API_KEY abaixo
-// ════════════════════════════════════════════
-const GCAL_API_KEY    = "AIzaSyDveFc6TOnyikVtHV_ncbqdcd7lqXV8mik";
-const GCAL_CLIENT_ID  = "510073834567-ossj5sqfbetoj7glofqpmm4raqvduic2.apps.googleusercontent.com";
-let gisInited = false, gapiInited = false, tokenClient;
-
-function loadGoogleLibs() {
-  const s1 = document.createElement("script");
-  s1.src = "https://apis.google.com/js/api.js";
-  s1.onload = () => gapi.load("client", async () => {
-    await gapi.client.init({ apiKey:GCAL_API_KEY, discoveryDocs:["https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest"] });
-    gapiInited = true;
-  });
-  document.body.appendChild(s1);
-  const s2 = document.createElement("script");
-  s2.src = "https://accounts.google.com/gsi/client";
-  s2.onload = () => {
-    tokenClient = google.accounts.oauth2.initTokenClient({
-      client_id: GCAL_CLIENT_ID,
-      scope: "https://www.googleapis.com/auth/calendar.events",
-      callback: ""
-    });
-    gisInited = true;
-  };
-  document.body.appendChild(s2);
+// ── PAGAMENTOS ──
+function renderPagamentos() {
+  const pend = (dados.pagamentos||[]).filter(p=>!p.pago);
+  const pagos = (dados.pagamentos||[]).filter(p=>p.pago);
+  const total = pend.reduce((a,p)=>a+(parseFloat(p.valor)||0),0);
+  let html = `<div class="row"><p>Pagamentos</p><button onclick="modalPagamento()">+ Adicionar</button></div>`;
+  if (pend.length) {
+    html += `<div style="background:var(--red-bg);border-radius:var(--radius);padding:12px;margin-bottom:16px;display:flex;justify-content:space-between;align-items:center">
+      <span style="font-size:13px;color:var(--red-text);font-weight:500">${pend.length} conta${pend.length!==1?"s":""} pendente${pend.length!==1?"s":""}</span>
+      <span style="font-size:16px;font-weight:500;color:var(--red-text)">R$ ${total.toFixed(2)}</span>
+    </div>`;
+  }
+  if (!(dados.pagamentos||[]).length) html += `<div class="empty">Nenhum pagamento cadastrado.</div>`;
+  pend.forEach(p => html += itemPagamento(p, false));
+  if (pagos.length) { html += `<p class="section-label">Pagos</p>`; pagos.forEach(p => html += itemPagamento(p, true)); }
+  return html;
 }
-loadGoogleLibs();
-
-async function agendarCalendar(tipo, f) {
-  if (!gapiInited || !gisInited) { showToast("Aguardando carregamento do Google...", false); return; }
-  return new Promise(resolve => {
-    tokenClient.callback = async (resp) => {
-      if (resp.error) { showToast("Erro ao autenticar no Google.", false); resolve(); return; }
-      try {
-        const dt = f.dataLembrete + "T" + (f.horaLembrete||"09:00") + ":00";
-        const hh = parseInt((f.horaLembrete||"09:00").split(":")[0]);
-        const mm = (f.horaLembrete||"09:00").split(":")[1];
-        const endDt = f.dataLembrete + "T" + String(hh+1).padStart(2,"0") + ":" + mm + ":00";
-        const emoji = tipo==="tarefa" ? "🏠" : "🔧";
-        await gapi.client.calendar.events.insert({
-          calendarId: "primary",
-          resource: {
-            summary: emoji + " " + f.nome,
-            description: (f.observacao||f.descricao||"") + (f.ambiente ? "\nAmbiente: "+f.ambiente : "") + (f.local ? "\nLocal: "+f.local : ""),
-            start: { dateTime: dt, timeZone: "America/Sao_Paulo" },
-            end:   { dateTime: endDt, timeZone: "America/Sao_Paulo" }
-          }
-        });
-        showToast("Agendado no Google Calendar! 📅");
-      } catch(e) { showToast("Erro ao criar evento.", false); }
-      resolve();
-    };
-    if (gapi.client.getToken() === null) tokenClient.requestAccessToken({ prompt:"consent" });
-    else tokenClient.requestAccessToken({ prompt:"" });
-  });
+function itemPagamento(p, pago) {
+  const vencida = p.vencimento && new Date(p.vencimento)<new Date() && !pago;
+  const tipoColor = { "Conta fixa":"blue","Parcela":"amber","Avulso":"gray" };
+  return `<div class="item${pago?" done":""}">
+    <input type="checkbox" ${pago?"checked":""} style="width:16px;height:16px;flex-shrink:0;margin-top:3px;cursor:pointer" onchange="togglePagamento('${p.id}')">
+    <div class="item-body" onclick="modalPagamento('${p.id}')">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <div class="item-name" style="flex:1">${esc(p.nome)}</div>
+        <div style="font-size:14px;font-weight:500;color:${pago?"var(--text2)":vencida?"var(--red-text)":"var(--text)"}">R$ ${parseFloat(p.valor||0).toFixed(2)}</div>
+      </div>
+      ${p.observacao?`<div class="item-sub">${esc(p.observacao)}</div>`:""}
+      <div class="item-badges">
+        ${badge(p.tipo,tipoColor[p.tipo]||"gray")}
+        ${badge(p.forma,"blue")}
+        ${p.vencimento?badge("Vence: "+p.vencimento,vencida?"red":"teal"):""}
+        ${p.parcelas?badge("Parcela "+p.parcelaAtual+"/"+p.parcelas,"purple"):""}
+        ${vencida?badge("Vencida","red"):""}
+        ${pago?badge("Pago ✓","green"):""}
+      </div>
+    </div>
+  </div>`;
 }
+function togglePagamento(id) { const p=(dados.pagamentos||[]).find(x=>x.id===id); if(p) salvarItem("pagamentos",{...p,pago:!p.pago}); }
+function modalPagamento(id) {
+  const p = id ? (dados.pagamentos||[]).find(x=>x.id===id) : null;
+  window._form = p ? {...p} : { id:uid(),nome:"",tipo:"Conta fixa",valor:"",vencimento:"",forma:"PIX",parcelas:"",parcelaAtual:"",observacao:"",pago:false };
+  const f = window._form;
+  abrirModal(`
+    <div class="modal-header"><span class="modal-title">${p?"Editar pagamento":"Novo pagamento"}</span><button class="modal-close" onclick="fecharModal()">✕</button></div>
+    <div class="gap"><input placeholder="Nome (ex: Conta de luz)" value="${esc(f.nome)}" oninput="window._form.nome=this.value"></div>
+    <div class="grid2 gap">${sel(tiposPagamento,f.tipo,"tipo")}${sel(formasPagamento,f.forma,"forma")}</div>
+    <div class="grid2 gap">
+      <input placeholder="Valor (R$)" type="number" step="0.01" value="${esc(f.valor||"")}" oninput="window._form.valor=this.value">
+      <input type="date" value="${esc(f.vencimento||"")}" onchange="window._form.vencimento=this.value">
+    </div>
+    <div class="grid2 gap">
+      <input placeholder="Total de parcelas" type="number" value="${esc(f.parcelas||"")}" oninput="window._form.parcelas=this.value">
+      <input placeholder="Parcela atual" type="number" value="${esc(f.parcelaAtual||"")}" oninput="window._form.parcelaAtual=this.value">
+    </div>
+    <div class="gap"><textarea placeholder="Observações (opcional)" oninput="window._form.observacao=this.value">${esc(f.observacao||"")}</textarea></div>
+    <button style="width:100%;margin-bottom:10px" onclick="salvarPagamento()">Salvar</button>
+    ${p?`<button class="btn-danger" style="width:100%" onclick="removerPagamento('${p.id}')">Excluir</button>`:""}
+  `);
+}
+function salvarPagamento() { if(!window._form.nome.trim()){showToast("Digite o nome do pagamento.",false);return;} salvarItem("pagamentos",window._form); fecharModal(); }
+function removerPagamento(id) { removerItem("pagamentos",id); fecharModal(); }
 
-// ════════════════════════════════════════════
-// PRESTADORES
-// ════════════════════════════════════════════
+// ── PRESTADORES ──
 function renderPrestadores() {
   let html = `<div class="row"><p>Prestadores de serviço</p><button onclick="modalPrestador()">+ Adicionar</button></div>`;
   if (!dados.prestadores.length) html += `<div class="empty">Nenhum prestador cadastrado.</div>`;
@@ -611,13 +542,59 @@ function modalPrestador(id) {
     <button style="width:100%" onclick="salvarPrestador()">Salvar prestador</button>
   `);
 }
-function salvarPrestador() {
-  if (!window._form.nome.trim()) { showToast("Digite o nome do prestador.",false); return; }
-  salvarItem("prestadores", window._form);
-  fecharModal();
-}
+function salvarPrestador() { if(!window._form.nome.trim()){showToast("Digite o nome do prestador.",false);return;} salvarItem("prestadores",window._form); fecharModal(); }
 function removerPrestador(id) { removerItem("prestadores",id); fecharModal(); }
+
+// ── GOOGLE CALENDAR ──
+let gisInited = false, gapiInited = false, tokenClient;
+function loadGoogleLibs() {
+  const s1 = document.createElement("script");
+  s1.src = "https://apis.google.com/js/api.js";
+  s1.onload = () => gapi.load("client", async () => {
+    await gapi.client.init({ apiKey:GCAL_API_KEY, discoveryDocs:["https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest"] });
+    gapiInited = true;
+  });
+  document.body.appendChild(s1);
+  const s2 = document.createElement("script");
+  s2.src = "https://accounts.google.com/gsi/client";
+  s2.onload = () => {
+    tokenClient = google.accounts.oauth2.initTokenClient({ client_id:GCAL_CLIENT_ID, scope:"https://www.googleapis.com/auth/calendar.events", callback:"" });
+    gisInited = true;
+  };
+  document.body.appendChild(s2);
+}
+loadGoogleLibs();
+
+async function agendarCalendar(tipo, f) {
+  if (!gapiInited || !gisInited) { showToast("Aguardando carregamento do Google...", false); return; }
+  return new Promise(resolve => {
+    tokenClient.callback = async (resp) => {
+      if (resp.error) { showToast("Erro ao autenticar no Google.", false); resolve(); return; }
+      try {
+        const dt = f.dataLembrete + "T" + (f.horaLembrete||"09:00") + ":00";
+        const hh = parseInt((f.horaLembrete||"09:00").split(":")[0]);
+        const mm = (f.horaLembrete||"09:00").split(":")[1];
+        const endDt = f.dataLembrete + "T" + String(hh+1).padStart(2,"0") + ":" + mm + ":00";
+        const emoji = tipo==="tarefa" ? "🏠" : "🔧";
+        await gapi.client.calendar.events.insert({
+          calendarId:"primary",
+          resource:{
+            summary: emoji + " " + f.nome,
+            description: (f.observacao||f.descricao||"") + (f.ambiente?"\nAmbiente: "+f.ambiente:"") + (f.local?"\nLocal: "+f.local:""),
+            start:{ dateTime:dt, timeZone:"America/Sao_Paulo" },
+            end:{ dateTime:endDt, timeZone:"America/Sao_Paulo" }
+          }
+        });
+        showToast("Agendado no Google Calendar! 📅");
+      } catch(e) { showToast("Erro ao criar evento.", false); }
+      resolve();
+    };
+    if (gapi.client.getToken()===null) tokenClient.requestAccessToken({ prompt:"consent" });
+    else tokenClient.requestAccessToken({ prompt:"" });
+  });
+}
 </script>
+
 <!-- RODAPÉ -->
 <div style="text-align:center;padding:24px 16px 40px;color:var(--text3);font-size:12px;border-top:0.5px solid var(--border);margin-top:32px">
   Elaborado por <strong style="color:var(--text2)">Josana Roiz</strong> · <a href="https://instagram.com/josanaroiz" target="_blank" style="color:var(--text2);text-decoration:none">@josanaroiz</a>
