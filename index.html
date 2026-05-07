@@ -570,23 +570,58 @@ function salvarComParcelas() {
 
 function abrirModalParcelas(p) {
   window._formParcelas = p;
-  let campos = "";
-  p.listaParcelas.forEach((parc, i) => {
-    campos += `<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
-      <span style="font-size:13px;color:var(--text2);min-width:70px;flex-shrink:0">Parcela ${i+1}</span>
-      <input type="date" value="${esc(parc.data||"")}" onchange="window._formParcelas.listaParcelas[${i}].data=this.value" style="flex:1">
-      <input type="number" step="0.01" placeholder="R$" value="${esc(parc.valor||p.valor||"")}" oninput="window._formParcelas.listaParcelas[${i}].valor=this.value" style="width:80px;flex-shrink:0">
-    </div>`;
-  });
+  window._modoParc = "auto";
   abrirModal(`
     <div class="modal-header"><span class="modal-title">Datas das parcelas</span><button class="modal-close" onclick="fecharModal()">✕</button></div>
     <p style="font-size:13px;color:var(--text2);margin-bottom:14px">${esc(p.nome)} — ${p.listaParcelas.length} parcelas</p>
-    ${campos}
+
+    <div style="display:flex;gap:8px;margin-bottom:16px">
+      <button id="btn-auto" onclick="setModoParc('auto')" style="flex:1;background:var(--blue-bg);color:var(--blue-text);border-color:#B5D4F4">🔁 Mensal automático</button>
+      <button id="btn-manual" onclick="setModoParc('manual')" style="flex:1">✏️ Datas manuais</button>
+    </div>
+
+    <div id="parc-auto">
+      <div class="field-label">Data da 1ª parcela</div>
+      <div class="gap"><input type="date" id="parc-inicio" style="width:100%"></div>
+      <p style="font-size:12px;color:var(--text2)">As demais parcelas serão geradas no mesmo dia dos meses seguintes.</p>
+    </div>
+
+    <div id="parc-manual" style="display:none">
+      ${p.listaParcelas.map((parc,i) => `
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+          <span style="font-size:13px;color:var(--text2);min-width:70px;flex-shrink:0">Parcela ${i+1}</span>
+          <input type="date" value="${esc(parc.data||"")}" onchange="window._formParcelas.listaParcelas[${i}].data=this.value" style="flex:1">
+          <input type="number" step="0.01" placeholder="R$" value="${esc(parc.valor||p.valor||"")}" oninput="window._formParcelas.listaParcelas[${i}].valor=this.value" style="width:80px;flex-shrink:0">
+        </div>`).join("")}
+    </div>
+
     <button style="width:100%;margin-top:8px" onclick="confirmarParcelas()">Salvar parcelas</button>
   `);
 }
 
+function setModoParc(modo) {
+  window._modoParc = modo;
+  document.getElementById("parc-auto").style.display = modo==="auto" ? "block" : "none";
+  document.getElementById("parc-manual").style.display = modo==="manual" ? "block" : "none";
+  document.getElementById("btn-auto").style.background = modo==="auto" ? "var(--blue-bg)" : "var(--bg)";
+  document.getElementById("btn-auto").style.color = modo==="auto" ? "var(--blue-text)" : "var(--text)";
+  document.getElementById("btn-manual").style.background = modo==="manual" ? "var(--blue-bg)" : "var(--bg)";
+  document.getElementById("btn-manual").style.color = modo==="manual" ? "var(--blue-text)" : "var(--text)";
+}
+
 function confirmarParcelas() {
+  if (window._modoParc === "auto") {
+    const inicio = document.getElementById("parc-inicio").value;
+    if (!inicio) { showToast("Informe a data da 1ª parcela.",false); return; }
+    const n = window._formParcelas.listaParcelas.length;
+    const lista = [];
+    for (let i=0; i<n; i++) {
+      const d = new Date(inicio + "T12:00:00");
+      d.setMonth(d.getMonth() + i);
+      lista.push({ paga:false, data:d.toISOString().slice(0,10), valor:window._formParcelas.listaParcelas[0].valor });
+    }
+    window._formParcelas.listaParcelas = lista;
+  }
   salvarItem("pagamentos", window._formParcelas);
   fecharModal();
   showToast(`${window._formParcelas.listaParcelas.length} parcelas salvas! ✅`);
