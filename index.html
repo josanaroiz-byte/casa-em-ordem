@@ -437,51 +437,140 @@ function renderPagamentos() {
   if (pagos.length) { html += `<p class="section-label">Pagos</p>`; pagos.forEach(p => html += itemPagamento(p, true)); }
   return html;
 }
+
 function itemPagamento(p, pago) {
   const vencida = p.vencimento && new Date(p.vencimento)<new Date() && !pago;
   const tipoColor = { "Conta fixa":"blue","Parcela":"amber","Avulso":"gray" };
-  return `<div class="item${pago?" done":""}">
-    <input type="checkbox" ${pago?"checked":""} style="width:16px;height:16px;flex-shrink:0;margin-top:3px;cursor:pointer" onchange="togglePagamento('${p.id}')">
-    <div class="item-body" onclick="modalPagamento('${p.id}')">
-      <div style="display:flex;justify-content:space-between;align-items:center">
-        <div class="item-name" style="flex:1">${esc(p.nome)}</div>
-        <div style="font-size:14px;font-weight:500;color:${pago?"var(--text2)":vencida?"var(--red-text)":"var(--text)"}">R$ ${parseFloat(p.valor||0).toFixed(2)}</div>
+  const temParcelas = p.tipo==="Parcela" && p.listaParcelas && p.listaParcelas.length>0;
+  const pagas = temParcelas ? p.listaParcelas.filter(x=>x.paga).length : 0;
+  const total = temParcelas ? p.listaParcelas.length : 0;
+  const proxima = temParcelas ? p.listaParcelas.find(x=>!x.paga) : null;
+
+  return `<div style="border-bottom:0.5px solid var(--border)">
+    <div class="item${pago?" done":""}" style="border-bottom:none">
+      <input type="checkbox" ${pago?"checked":""} style="width:16px;height:16px;flex-shrink:0;margin-top:3px;cursor:pointer" onchange="togglePagamento('${p.id}')">
+      <div class="item-body" onclick="toggleExpandirPagamento('${p.id}')">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div class="item-name" style="flex:1">${esc(p.nome)}</div>
+          <div style="font-size:14px;font-weight:500;color:${pago?"var(--text2)":vencida?"var(--red-text)":"var(--text)"}">R$ ${parseFloat(p.valor||0).toFixed(2)}</div>
+        </div>
+        ${p.observacao?`<div class="item-sub">${esc(p.observacao)}</div>`:""}
+        <div class="item-badges">
+          ${badge(p.tipo,tipoColor[p.tipo]||"gray")}
+          ${badge(p.forma,"blue")}
+          ${temParcelas?badge(`${pagas}/${total} parcelas pagas`,"purple"):""}
+          ${proxima?badge("Próx: "+proxima.data,new Date(proxima.data)<new Date()?"red":"teal"):""}
+          ${!temParcelas && p.vencimento?badge("Vence: "+p.vencimento,vencida?"red":"teal"):""}
+          ${vencida&&!temParcelas?badge("Vencida","red"):""}
+          ${pago?badge("Pago ✓","green"):""}
+          ${temParcelas?`<span style="font-size:11px;color:var(--text2);margin-left:auto">${window._expandidos&&window._expandidos[p.id]?"▲ Recolher":"▼ Ver parcelas"}</span>`:""}
+        </div>
       </div>
-      ${p.observacao?`<div class="item-sub">${esc(p.observacao)}</div>`:""}
-      <div class="item-badges">
-        ${badge(p.tipo,tipoColor[p.tipo]||"gray")}
-        ${badge(p.forma,"blue")}
-        ${p.vencimento?badge("Vence: "+p.vencimento,vencida?"red":"teal"):""}
-        ${p.parcelas?badge("Parcela "+p.parcelaAtual+"/"+p.parcelas,"purple"):""}
-        ${vencida?badge("Vencida","red"):""}
-        ${pago?badge("Pago ✓","green"):""}
-      </div>
+      <button onclick="event.stopPropagation();modalPagamento('${p.id}')" style="font-size:11px;padding:3px 8px;flex-shrink:0">✎</button>
     </div>
+    ${temParcelas && window._expandidos && window._expandidos[p.id] ? renderParcelas(p) : ""}
   </div>`;
 }
-function togglePagamento(id) { const p=(dados.pagamentos||[]).find(x=>x.id===id); if(p) salvarItem("pagamentos",{...p,pago:!p.pago}); }
+
+function renderParcelas(p) {
+  let html = `<div style="padding:0 0 12px 26px">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+      <span style="font-size:12px;color:var(--text2);font-weight:500">Parcelas</span>
+      <button onclick="marcarTodasParcelas('${p.id}')" style="font-size:11px;padding:3px 10px">Marcar todas</button>
+    </div>`;
+  p.listaParcelas.forEach((parc, i) => {
+    const venc = parc.data && new Date(parc.data)<new Date() && !parc.paga;
+    html += `<div style="display:flex;align-items:center;gap:8px;padding:7px 10px;background:${parc.paga?"var(--bg2)":"#f8f6f0"};border-radius:var(--radius);margin-bottom:6px">
+      <input type="checkbox" ${parc.paga?"checked":""} style="width:15px;height:15px;cursor:pointer;flex-shrink:0" onchange="toggleParcela('${p.id}',${i})">
+      <span style="font-size:13px;color:var(--text);flex:1;${parc.paga?"text-decoration:line-through;color:var(--text2)":""}">Parcela ${i+1}/${p.listaParcelas.length}</span>
+      <span style="font-size:12px;color:${venc?"var(--red-text)":parc.paga?"var(--text2)":"var(--text2)"}">R$ ${parseFloat(parc.valor||p.valor||0).toFixed(2)}</span>
+      <span style="font-size:11px;color:${venc?"var(--red-text)":parc.paga?"var(--text2)":"var(--text2)"}">${parc.data||""}</span>
+    </div>`;
+  });
+  html += `</div>`;
+  return html;
+}
+
+window._expandidos = {};
+function toggleExpandirPagamento(id) {
+  if (!window._expandidos) window._expandidos = {};
+  window._expandidos[id] = !window._expandidos[id];
+  renderAba();
+}
+
+function toggleParcela(pagId, idx) {
+  const p = (dados.pagamentos||[]).find(x=>x.id===pagId);
+  if (!p || !p.listaParcelas) return;
+  const novas = [...p.listaParcelas];
+  novas[idx] = { ...novas[idx], paga: !novas[idx].paga };
+  const todasPagas = novas.every(x=>x.paga);
+  salvarItem("pagamentos", { ...p, listaParcelas:novas, pago:todasPagas });
+}
+
+function marcarTodasParcelas(pagId) {
+  const p = (dados.pagamentos||[]).find(x=>x.id===pagId);
+  if (!p || !p.listaParcelas) return;
+  const todasPagas = p.listaParcelas.every(x=>x.paga);
+  const novas = p.listaParcelas.map(x=>({...x, paga:!todasPagas}));
+  salvarItem("pagamentos", { ...p, listaParcelas:novas, pago:!todasPagas });
+}
+
+function togglePagamento(id) {
+  const p = (dados.pagamentos||[]).find(x=>x.id===id);
+  if (!p) return;
+  if (p.listaParcelas && p.listaParcelas.length>0) {
+    const novas = p.listaParcelas.map(x=>({...x,paga:!p.pago}));
+    salvarItem("pagamentos", {...p, listaParcelas:novas, pago:!p.pago});
+  } else {
+    salvarItem("pagamentos", {...p, pago:!p.pago});
+  }
+}
+
 function modalPagamento(id) {
   const p = id ? (dados.pagamentos||[]).find(x=>x.id===id) : null;
-  window._form = p ? {...p} : { id:uid(),nome:"",tipo:"Conta fixa",valor:"",vencimento:"",forma:"PIX",parcelas:"",parcelaAtual:"",observacao:"",pago:false };
+  window._form = p ? {...p} : { id:uid(),nome:"",tipo:"Conta fixa",valor:"",vencimento:"",forma:"PIX",parcelas:"",parcelaInicio:"",observacao:"",pago:false,listaParcelas:[] };
   const f = window._form;
   abrirModal(`
     <div class="modal-header"><span class="modal-title">${p?"Editar pagamento":"Novo pagamento"}</span><button class="modal-close" onclick="fecharModal()">✕</button></div>
-    <div class="gap"><input placeholder="Nome (ex: Conta de luz)" value="${esc(f.nome)}" oninput="window._form.nome=this.value"></div>
+    <div class="gap"><input placeholder="Nome (ex: Financiamento do carro)" value="${esc(f.nome)}" oninput="window._form.nome=this.value"></div>
     <div class="grid2 gap">${sel(tiposPagamento,f.tipo,"tipo")}${sel(formasPagamento,f.forma,"forma")}</div>
     <div class="grid2 gap">
-      <input placeholder="Valor (R$)" type="number" step="0.01" value="${esc(f.valor||"")}" oninput="window._form.valor=this.value">
-      <input type="date" value="${esc(f.vencimento||"")}" onchange="window._form.vencimento=this.value">
+      <input placeholder="Valor por parcela (R$)" type="number" step="0.01" value="${esc(f.valor||"")}" oninput="window._form.valor=this.value">
+      <input placeholder="Nº de parcelas" type="number" value="${esc(f.parcelas||"")}" oninput="window._form.parcelas=this.value">
     </div>
-    <div class="grid2 gap">
-      <input placeholder="Total de parcelas" type="number" value="${esc(f.parcelas||"")}" oninput="window._form.parcelas=this.value">
-      <input placeholder="Parcela atual" type="number" value="${esc(f.parcelaAtual||"")}" oninput="window._form.parcelaAtual=this.value">
-    </div>
+    <div class="field-label">Data da 1ª parcela</div>
+    <div class="gap"><input type="date" value="${esc(f.parcelaInicio||f.vencimento||"")}" onchange="window._form.parcelaInicio=this.value;window._form.vencimento=this.value"></div>
     <div class="gap"><textarea placeholder="Observações (opcional)" oninput="window._form.observacao=this.value">${esc(f.observacao||"")}</textarea></div>
-    <button style="width:100%;margin-bottom:10px" onclick="salvarPagamento()">Salvar</button>
-    ${p?`<button class="btn-danger" style="width:100%" onclick="removerPagamento('${p.id}')">Excluir</button>`:""}
+    <div class="grid2 gap">
+      <button onclick="salvarPagamento()">Salvar</button>
+      <button class="btn-primary" onclick="salvarComParcelas()">Salvar com parcelas</button>
+    </div>
+    ${p?`<button class="btn-danger" style="width:100%;margin-top:4px" onclick="removerPagamento('${p.id}')">Excluir</button>`:""}
   `);
 }
-function salvarPagamento() { if(!window._form.nome.trim()){showToast("Digite o nome do pagamento.",false);return;} salvarItem("pagamentos",window._form); fecharModal(); }
+
+function salvarPagamento() {
+  if (!window._form.nome.trim()) { showToast("Digite o nome do pagamento.",false); return; }
+  salvarItem("pagamentos", window._form);
+  fecharModal();
+}
+
+function salvarComParcelas() {
+  if (!window._form.nome.trim()) { showToast("Digite o nome.",false); return; }
+  if (!window._form.parcelas || !window._form.parcelaInicio) { showToast("Informe o número de parcelas e a data da 1ª parcela.",false); return; }
+  const n = parseInt(window._form.parcelas);
+  const inicio = new Date(window._form.parcelaInicio + "T12:00:00");
+  const lista = [];
+  for (let i=0; i<n; i++) {
+    const d = new Date(inicio);
+    d.setMonth(d.getMonth() + i);
+    lista.push({ paga:false, data:d.toISOString().slice(0,10), valor:window._form.valor });
+  }
+  salvarItem("pagamentos", { ...window._form, listaParcelas:lista, tipo:"Parcela" });
+  fecharModal();
+  showToast(`${n} parcelas criadas! ✅`);
+}
+
 function removerPagamento(id) { removerItem("pagamentos",id); fecharModal(); }
 
 // ── PRESTADORES ──
