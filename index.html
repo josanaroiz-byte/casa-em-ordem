@@ -557,18 +557,39 @@ function salvarPagamento() {
 
 function salvarComParcelas() {
   if (!window._form.nome.trim()) { showToast("Digite o nome.",false); return; }
-  if (!window._form.parcelas || !window._form.parcelaInicio) { showToast("Informe o número de parcelas e a data da 1ª parcela.",false); return; }
+  if (!window._form.parcelas) { showToast("Informe o número de parcelas.",false); return; }
   const n = parseInt(window._form.parcelas);
-  const inicio = new Date(window._form.parcelaInicio + "T12:00:00");
+  if (n < 1) { showToast("Número de parcelas inválido.",false); return; }
   const lista = [];
   for (let i=0; i<n; i++) {
-    const d = new Date(inicio);
-    d.setMonth(d.getMonth() + i);
-    lista.push({ paga:false, data:d.toISOString().slice(0,10), valor:window._form.valor });
+    lista.push({ paga:false, data:"", valor:window._form.valor });
   }
-  salvarItem("pagamentos", { ...window._form, listaParcelas:lista, tipo:"Parcela" });
   fecharModal();
-  showToast(`${n} parcelas criadas! ✅`);
+  abrirModalParcelas({ ...window._form, listaParcelas:lista, tipo:"Parcela" });
+}
+
+function abrirModalParcelas(p) {
+  window._formParcelas = p;
+  let campos = "";
+  p.listaParcelas.forEach((parc, i) => {
+    campos += `<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+      <span style="font-size:13px;color:var(--text2);min-width:70px;flex-shrink:0">Parcela ${i+1}</span>
+      <input type="date" value="${esc(parc.data||"")}" onchange="window._formParcelas.listaParcelas[${i}].data=this.value" style="flex:1">
+      <input type="number" step="0.01" placeholder="R$" value="${esc(parc.valor||p.valor||"")}" oninput="window._formParcelas.listaParcelas[${i}].valor=this.value" style="width:80px;flex-shrink:0">
+    </div>`;
+  });
+  abrirModal(`
+    <div class="modal-header"><span class="modal-title">Datas das parcelas</span><button class="modal-close" onclick="fecharModal()">✕</button></div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:14px">${esc(p.nome)} — ${p.listaParcelas.length} parcelas</p>
+    ${campos}
+    <button style="width:100%;margin-top:8px" onclick="confirmarParcelas()">Salvar parcelas</button>
+  `);
+}
+
+function confirmarParcelas() {
+  salvarItem("pagamentos", window._formParcelas);
+  fecharModal();
+  showToast(`${window._formParcelas.listaParcelas.length} parcelas salvas! ✅`);
 }
 
 function removerPagamento(id) { removerItem("pagamentos",id); fecharModal(); }
